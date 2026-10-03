@@ -1,0 +1,5 @@
+.DS_Store
+.scratch/
+# paper source (unpublished submission) - keep out of the public site
+Data_free_Distillation__ICLR_2027_/
+__pycache__/
