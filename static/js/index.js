@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const caption = document.getElementById('gallery-caption');
   const classPills = document.getElementById('class-pills');
   const nfeToggle = document.getElementById('nfe-toggle');
-  const state = { cls: '279', clsName: 'Arctic fox', nfe: '1nfe', nfeName: '1 step' };
+  const state = { cls: '279', clsName: 'Arctic fox', nfe: '1nfe', nfeName: '1 step (1 NFE)' };
 
   const showGallery = () => {
     img.src = `./static/images/imagenet/c${state.cls}_${state.nfe}.jpg`;
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!btn) return;
     activate(nfeToggle, btn);
     state.nfe = btn.dataset.nfe;
-    state.nfeName = btn.textContent.trim();
+    state.nfeName = btn.dataset.caption || btn.textContent.trim();
     showGallery();
   });
 
@@ -107,22 +107,3 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// ---- teaser video: click (or Space/Enter on the button) to pause / play
-document.addEventListener('DOMContentLoaded', () => {
-  const video = document.querySelector('.teaser-video');
-  const btn = document.querySelector('.video-toggle');
-  if (!video || !btn) return;
-  const icon = btn.querySelector('i');
-  const sync = () => {
-    const paused = video.paused;
-    icon.className = paused ? 'fas fa-play' : 'fas fa-pause';
-    btn.setAttribute('aria-label', paused ? 'Play animation' : 'Pause animation');
-    btn.parentElement.classList.toggle('is-paused', paused);
-  };
-  const toggle = () => { if (video.paused) video.play(); else video.pause(); };
-  video.addEventListener('click', toggle);
-  btn.addEventListener('click', toggle);
-  video.addEventListener('play', sync);
-  video.addEventListener('pause', sync);
-  sync();
-});

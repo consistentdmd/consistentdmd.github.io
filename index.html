@@ -411,13 +411,7 @@
 <section class="section teaser">
   <div class="container is-max-desktop">
     <figure class="teaser-figure">
-      <div class="video-wrap">
-      <video class="teaser-video" autoplay muted loop playsinline preload="auto" poster="./static/videos/cdmd_teaser_poster.jpg"
-             aria-label="Animation: particles start from the prior distribution p1 = q1 and follow the student's velocity field to the student distribution q0. At intermediate states the teacher's velocity field guides them through the CDMD loss, until q0 matches the teacher distribution p0.">
-        <source src="./static/videos/cdmd_teaser.mp4" type="video/mp4">
-      </video>
-      <button class="video-toggle" type="button" aria-label="Pause animation"><i class="fas fa-pause"></i></button>
-      </div>
+      <video id="overview-video" src="./static/videos/cdmd_teaser.mp4?v=2026-10-04" poster="./static/videos/cdmd_teaser_poster.jpg?v=2026-10-04" autoplay="" muted="" loop="" playsinline="" controls="" preload="auto" aria-label="Animated overview of CDMD: particles leave the prior distribution p1 = q1 along the student flow, the teacher velocity field corrects them through the CDMD loss, and the student distribution q0 converges to the teacher distribution p0."></video>
       <figcaption>Particles leave the prior distribution \(p_1=q_1\) along the <span class="c-student">student</span> flow. On the way, the
         <span class="c-teacher">teacher</span>&rsquo;s velocity field corrects them through \(\mathcal{L}_{\mathrm{CDMD}}\),
         until the student distribution \(q_0\) matches the teacher distribution \(p_0\).</figcaption>
@@ -602,7 +596,10 @@
 
     <!-- ImageNet gallery -->
     <h3 class="title is-5 sub-title">ImageNet 256&times;256: uncurated samples</h3>
-    <p class="lead">One student, any number of steps. Distilled from LightningDiT-XL/2 and sampled without retraining.</p>
+    <p class="lead">
+      Uncurated samples from the CDMD student distilled from LightningDiT-XL/2, generated <b>without classifier-free
+      guidance</b>, so each step is a single network evaluation (1 step = 1 NFE). Multi-step samples use the Euler sampler.
+    </p>
 
     <div class="gallery">
       <div class="gallery-controls">
@@ -614,15 +611,20 @@
           <button class="pill" data-class="780">schooner</button>
           <button class="pill" data-class="933">cheeseburger</button>
           <button class="pill" data-class="974">geyser</button>
+          <button class="pill" data-class="90">lorikeet</button>
+          <button class="pill" data-class="323">monarch butterfly</button>
+          <button class="pill" data-class="388">giant panda</button>
+          <button class="pill" data-class="417">balloon</button>
+          <button class="pill" data-class="992">agaric</button>
         </div>
         <div class="segmented" id="nfe-toggle" role="tablist" aria-label="Sampling steps">
-          <button class="seg is-active" data-nfe="1nfe">1 step</button>
-          <button class="seg" data-nfe="2nfe">2 steps</button>
-          <button class="seg" data-nfe="4nfe">4 steps</button>
+          <button class="seg is-active" data-nfe="1nfe" data-caption="1 step (1 NFE)">1 step</button>
+          <button class="seg" data-nfe="2nfe" data-caption="2 steps (2 NFE, Euler)">2 steps</button>
+          <button class="seg" data-nfe="4nfe" data-caption="4 steps (4 NFE, Euler)">4 steps</button>
         </div>
       </div>
       <img id="gallery-img" class="rounded" src="./static/images/imagenet/c279_1nfe.jpg" alt="Uncurated CDMD samples, ImageNet class Arctic fox, 1 sampling step." width="1792" height="512">
-      <p class="gallery-caption" id="gallery-caption">Arctic fox &middot; 1 step &middot; uncurated</p>
+      <p class="gallery-caption" id="gallery-caption">Arctic fox &middot; 1 step (1 NFE) &middot; uncurated</p>
     </div>
 
     <!-- ImageNet table + compute plot -->
@@ -674,6 +676,45 @@
           <figcaption>1-step FID vs. training compute. Labels give training memory on one A100 under the same configuration.</figcaption>
         </figure>
       </div>
+    </div>
+
+    <!-- Multi-step sampling -->
+    <div class="multistep">
+      <div class="multistep-head"><i class="fas fa-forward-step"></i> One student, any number of steps</div>
+      <div class="step-ladder">
+        <div class="rung"><span class="rung-steps">1 step</span><span class="rung-fid">2.04</span></div>
+        <div class="rung"><span class="rung-steps">2 steps</span><span class="rung-fid">1.62</span></div>
+        <div class="rung"><span class="rung-steps">4 steps</span><span class="rung-fid">1.37</span></div>
+        <div class="rung is-teacher"><span class="rung-steps">Teacher, 250&times;2 NFE</span><span class="rung-fid">1.35</span></div>
+      </div>
+      <p class="rung-note">FID-50K on ImageNet 256&times;256, LightningDiT-XL/2 teacher.</p>
+
+      <figure class="scaling-figure">
+        <img class="zoomable" src="./static/images/inference_scaling.png" alt="Inference-time scaling with the LightningDiT-XL/2 teacher. Left: FID against sampling steps from 1 to 64 for Euler and DDIM; Euler drops from 2.04 to near the teacher reference by 4 to 8 steps and stays there up to 64 steps, while DDIM rises above 5 by 64 steps. Right: Inception Score; DDIM keeps increasing to about 420, Euler stays around 310 to 320." loading="lazy">
+        <figcaption><b>Inference-time scaling with the LightningDiT-XL/2 teacher.</b> FID (left) and IS (right) against the
+          number of sampling steps for Euler and DDIM, using the same distilled student (trained with \(t=r\) for 50% of
+          the pairs). Dashed line: teacher reference.</figcaption>
+      </figure>
+
+      <details class="multistep-details">
+        <summary>How does one student take any number of steps?</summary>
+        <div class="details-body">
+      <p>
+        CDMD learns the average velocity \(u_\theta(x_t,t,r)\) over <b>any</b> time interval \([r,t]\), not only
+        from pure noise to data. The student can therefore jump from noise to an image in one step, or split the trip
+        into shorter jumps by chaining its own flow map over consecutive intervals:
+      </p>
+      <div class="eq">\[\hat{x}_{t_{k+1}}=\hat{x}_{t_k}-(t_k-t_{k+1})\,u_\theta(\hat{x}_{t_k},t_k,t_{k+1}),\qquad 1=t_0>t_1>\dots>t_K=0 .\]</div>
+      <p>Each jump is one network evaluation, and no retraining is needed to change the number of steps.</p>
+      <ul class="multistep-points">
+        <li><b>Euler keeps the teacher's multi-step behavior.</b> FID improves up to 8 steps and then stays close to the
+          teacher reference all the way to 64 steps, instead of drifting away.</li>
+        <li><b>The sampler matters.</b> DDIM raises IS but degrades FID beyond 4 steps.</li>
+        <li><b>Prior-anchored students cannot do this.</b> FreeFlow's student only maps from pure noise at \(t=1\),
+          so it has no sub-interval map to take extra steps with.</li>
+      </ul>
+        </div>
+      </details>
     </div>
 
     <!-- Text-to-image -->

@@ -6,7 +6,7 @@ served by GitHub Pages at <https://consistentdmd.github.io/>.
 ## Layout
 
 - `index.html`: the page
-- `static/css/index.css`, `static/js/index.js`: styles and small interactions (gallery, table toggle, lightbox, video pause)
+- `static/css/index.css`, `static/js/index.js`: styles and small interactions (gallery, table toggle, lightbox, mobile menu)
 - `static/images/`: figures and samples converted from the paper
 - `static/videos/`: teaser animation and its poster frame
 - `tools/cdmd_teaser.py`: Manim scene that renders the teaser animation
