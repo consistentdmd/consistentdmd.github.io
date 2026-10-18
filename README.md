@@ -13,8 +13,8 @@ served by GitHub Pages at <https://consistentdmd.github.io/>.
 
 ## Updating
 
-- **Paper / arXiv / code / checkpoints:** each button in the header is a `<span class="link-block is-soon">`.
-  Replace it with `<a class="link-block" href="...">` and delete its `soon-tag` once the resource is public.
+- **Header links:** Paper, arXiv, alphaXiv, Code, and Checkpoints (Hugging Face) are `<a class="link-block">` buttons in `index.html`.
+  Icons come from Font Awesome / Academicons; alphaXiv uses `static/images/alphaxiv.png` and Hugging Face the 🤗 emoji.
 - **BibTeX:** update the entry in `index.html` once the arXiv ID is available.
 - **Teaser video:** with [Manim Community](https://www.manim.community/) installed, run
   `manim -qh --fps 30 tools/cdmd_teaser.py CDMDTeaser`, then re-encode the output to `static/videos/cdmd_teaser.mp4`.
