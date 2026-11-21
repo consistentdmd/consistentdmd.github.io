@@ -603,19 +603,20 @@
           <tr><th>Method</th><th># Models</th><th># Optimizers</th><th>Data-free</th><th>Simulation-free</th><th>No GAN</th></tr>
         </thead>
         <tbody>
-          <tr><td>BOOT</td><td>2</td><td>1</td><td class="yes">&#10003;</td><td class="no">&#10007;</td><td class="yes">&#10003;</td></tr>
+          <tr><td>ReFlow / KD</td><td>2</td><td>1</td><td class="yes">&#10003;</td><td class="no">&#10007;</td><td class="yes">&#10003;</td></tr>
           <tr><td>DMD2</td><td>3</td><td>2</td><td class="yes">&#10003;<sup>&dagger;</sup></td><td class="yes">&#10003;<sup>&dagger;</sup></td><td class="no">&#10007;<sup>&dagger;</sup></td></tr>
           <tr><td>SiD-LSG</td><td>3</td><td>2</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
           <tr><td>SiDA</td><td>3</td><td>2</td><td class="no">&#10007;</td><td class="yes">&#10003;</td><td class="no">&#10007;</td></tr>
           <tr><td>FreeFlow</td><td>3</td><td>2</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
           <tr><td>CTM</td><td>3</td><td>2</td><td class="no">&#10007;</td><td class="yes">&#10003;</td><td class="no">&#10007;</td></tr>
-          <tr><td>FACM</td><td>2</td><td>1</td><td class="no">&#10007;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
+          <tr><td>FACM / TwinFlow</td><td>2</td><td>1</td><td class="no">&#10007;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
           <tr><td>MeanFlow / CM / IMM</td><td>2</td><td>1</td><td class="no">&#10007;</td><td class="yes">&#10003;</td><td class="yes">&#10003;<sup>&dagger;</sup></td></tr>
           <tr class="ours"><td>CDMD (ours)</td><td>2</td><td>1</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td><td class="yes">&#10003;</td></tr>
         </tbody>
       </table>
     </div>
     <p class="table-note">&dagger; depends on the training setup. A GAN objective needs real data for its discriminator.</p>
+    <p class="table-note">BOOT is also data-free with 2 models and 1 optimizer, but it combines several objectives, such as a boundary-condition constraint alongside its bootstrapping loss. CDMD trains with a single loss.</p>
   </div>
 </section>
 
